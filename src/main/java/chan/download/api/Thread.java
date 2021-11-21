@@ -55,13 +55,22 @@ public class Thread {
 		List<String> fileNames = new ArrayList<String>();
 		
 		try {
-			fileNames.add(getFileName(jsonObject));	//thread top entry
+			try {
+				fileNames.add(getFileName(jsonObject));
+			} catch(JSONException e) {
+				//no file in thread top entry
+			}
+			
 			JSONArray replies = jsonObject.getJSONArray("last_replies");
 			for(int i = 0; i < replies.length(); i++) {
-				fileNames.add(getFileName(replies.getJSONObject(i)));
+				try {
+					fileNames.add(getFileName(replies.getJSONObject(i)));
+				} catch(JSONException e) {
+					//no file in reply
+				}
 			}
 		} catch(JSONException e) {
-			//no file
+			//no replies
 		}
 		
 		return fileNames;
