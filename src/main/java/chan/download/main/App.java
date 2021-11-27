@@ -11,20 +11,23 @@ public class App {
 
 	public static void main(String[] args) {
 		if(args.length < 3) {
-			System.out.println("Usage: java -jar 4cdl.jar directory board query");
+			System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query");
 			System.exit(-1);
 		}
 		
 		String directory = args[0];
-		String board = args[1];
+		String[] boards = args[1].split(",");
 		String query = args[2];
 		
 		WebCrawler crawler = new WebCrawler();
 		crawler.useRepository(new FileRepository(directory));
+		Filter filter = new Filter(Field.ThreadName, FilterOperator.CONTAINS, query);
 		
-		Catalog catalog = new Catalog(board);
-		catalog.addFilter(new Filter(Field.ThreadName, FilterOperator.CONTAINS, query));
-		crawler.addCatalog(catalog);
+		for(String board : boards) {
+			Catalog catalog = new Catalog(board);
+			catalog.addFilter(filter);
+			crawler.addCatalog(catalog);
+		}
 		
 		crawler.download();
 	}
