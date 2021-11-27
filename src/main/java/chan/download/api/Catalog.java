@@ -6,11 +6,10 @@ import java.util.List;
 public class Catalog {
 
 	private List<Filter> filters;
-	private CatalogContent content;
-	private ArrayList<String> urls;
+	private String board;
 
 	public Catalog(String board) {
-		content = new CatalogContent(board);
+		this.board = board;
 		filters = new ArrayList<Filter>();
 	}
 
@@ -19,28 +18,10 @@ public class Catalog {
 	}
 	
 	public List<String> getURLs() {
-		ThreadList threads = content.getThreadsFilterBy(filters);
-		urls = new ArrayList<String>();
+		ThreadList threadList = ThreadListParser.parse(board);
+		threadList.addFilters(filters);
 		
-		for(int i = 0; i < threads.size(); i++) {
-			addThreadFileURLs(threads.get(i));
-		}
-		
-		return urls;
+		return threadList.getURLs();
 	}
 
-	private void addThreadFileURLs(Thread thread) {
-		List<String> files = thread.getFiles();
-		
-		for(String fileName : files) {
-			urls.add(makeFileURL(fileName));
-		}
-	}
-
-	private String makeFileURL(String fileName) {
-		String baseUrl = content.getFileBaseUrl();
-		
-		return String.format("%s/%s", baseUrl, fileName);
-	}
-	
 }
