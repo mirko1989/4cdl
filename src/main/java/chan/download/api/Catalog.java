@@ -18,7 +18,7 @@ public class Catalog {
 	}
 	
 	public List<String> getURLs() {
-		ThreadList threadList = ThreadListParser.parse(board);
+		ThreadList threadList = ThreadList.fromBoard(board);
 		threadList.addFilters(filters);
 		
 		return threadList.getURLs();

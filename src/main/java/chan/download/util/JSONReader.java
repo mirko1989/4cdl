@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class JSONReader {
 
@@ -23,19 +25,26 @@ public class JSONReader {
 		return sb.toString();
 	}
 
-	public static JSONArray readJsonFromUrl(String url) throws IOException {
+	public static JSONArray readJsonArrayFromUrl(String url) throws IOException {
+		return new JSONArray(readJsonTextFromUrl(url));
+	}
+	
+	public static JSONObject readJsonObjectFromUrl(String url) throws IOException {
+		return new JSONObject(readJsonTextFromUrl(url));
+	}
+
+	private static String readJsonTextFromUrl(String url) throws IOException, MalformedURLException {
 		InputStream is = new URL(url).openStream();
-		JSONArray json = new JSONArray();
+		String jsonText = "";
 
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-			String jsonText = readAll(br);
-			json = new JSONArray(jsonText);
+			jsonText = readAll(br);
 		} finally {
 			is.close();
 		}
 
-		return json;
+		return jsonText;
 	}
 
 }

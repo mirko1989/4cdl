@@ -3,6 +3,9 @@ package chan.download.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+
+import chan.download.util.JSONReader;
 import chan.download.util.URLUtil;
 
 public class ThreadList {
@@ -10,6 +13,26 @@ public class ThreadList {
 	private List<Thread> threads;
 	private List<Filter> filters;
 	private String board;
+	
+	public static ThreadList fromBoard(String board) {
+		ThreadList threadList = new ThreadList(board);
+		
+		try {
+			JSONArray pages = JSONReader.readJsonArrayFromUrl(URLUtil.makeCatalogURL(board));
+			for(int i = 0; i < pages.length(); i++) {
+				JSONArray threads = pages.getJSONObject(i).getJSONArray("threads");
+				for(int j = 0; j < threads.length(); j++) {
+					ThreadParser.board = board;
+					Thread thread = ThreadParser.parse(threads.getJSONObject(j));
+					threadList.add(thread);
+				}
+			}
+		} catch (Throwable e) {
+			System.err.println("Couldn't parse catalog json");
+		}
+		
+		return threadList;
+	}
 
 	public ThreadList(String board) {
 		this.board = board;
