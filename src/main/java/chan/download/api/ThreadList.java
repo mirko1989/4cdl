@@ -22,8 +22,8 @@ public class ThreadList {
 			for(int i = 0; i < pages.length(); i++) {
 				JSONArray threads = pages.getJSONObject(i).getJSONArray("threads");
 				for(int j = 0; j < threads.length(); j++) {
-					ThreadParser.board = board;
-					Thread thread = ThreadParser.parse(threads.getJSONObject(j));
+					Thread thread = Thread.fromJson(threads.getJSONObject(j));
+					thread.setBoard(board);
 					threadList.add(thread);
 				}
 			}
