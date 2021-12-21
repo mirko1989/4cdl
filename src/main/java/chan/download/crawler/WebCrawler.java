@@ -42,5 +42,11 @@ public class WebCrawler {
 			}
 		}
 	}
+
+	public void listThreads() {
+		for(Catalog catalog : catalogs) {
+			catalog.getURLs();
+		}
+	}
 	
 }

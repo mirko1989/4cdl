@@ -11,13 +11,18 @@ public class App {
 
 	public static void main(String[] args) {
 		if(args.length < 3) {
-			System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query");
+			System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query [--name-only]");
 			System.exit(-1);
 		}
 		
 		String directory = args[0];
 		String[] boards = args[1].split(",");
 		String query = args[2];
+		
+		boolean isNamesOnly = false;
+		if(args.length == 4) {
+			isNamesOnly = args[3].equals("--name-only");
+		}
 		
 		WebCrawler crawler = new WebCrawler();
 		crawler.useRepository(new FileRepository(directory));
@@ -29,7 +34,11 @@ public class App {
 			crawler.addCatalog(catalog);
 		}
 		
-		crawler.download();
+		if(isNamesOnly) {
+			crawler.listThreads();
+		} else {
+			crawler.download();
+		}
 	}
 	
 }

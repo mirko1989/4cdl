@@ -111,12 +111,17 @@ public class ThreadList {
 		List<String>urls = new ArrayList<String>();
 		
 		for(int i = 0; i < this.size(); i++) {
+			logThread(this.get(i));
 			for(String fileName : this.get(i).getFiles()) {
 				urls.add(URLUtil.makeFileURL(board, fileName));
 			}
 		}
 		
 		return urls;
+	}
+
+	private void logThread(Thread thread) {
+		System.out.println(String.format("%s --> %s\n", board, thread.getName()));		
 	}
 	
 }
