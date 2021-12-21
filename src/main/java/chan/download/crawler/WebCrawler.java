@@ -43,7 +43,7 @@ public class WebCrawler {
 		}
 	}
 
-	public void listThreads() {
+	public void printThreads() {
 		for(Catalog catalog : catalogs) {
 			catalog.getURLs();
 		}

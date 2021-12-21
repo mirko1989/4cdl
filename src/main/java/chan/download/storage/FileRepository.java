@@ -19,9 +19,10 @@ public class FileRepository implements Repository {
 	public void save(String url) throws SaveException {
 		try {
 			InputStream in = new URL(url).openStream();
-			Files.copy(in, getAbsoluteFilePath(url));
+			Path path = getAbsoluteFilePath(url);
+			Files.copy(in, path);
 		} catch(Exception ex) {
-			throw new SaveException(String.format("Couldn't save $s", url));
+			throw new SaveException(String.format("Couldn't save %s", url));
 		}
 	}
 

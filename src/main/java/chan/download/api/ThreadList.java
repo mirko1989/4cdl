@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import chan.download.util.JSONReader;
 import chan.download.util.URLUtil;
@@ -12,15 +13,17 @@ public class ThreadList {
 
 	private List<Thread> threads;
 	private List<Filter> filters;
-	private String board;
 	
 	public static ThreadList fromBoard(String board) {
-		ThreadList threadList = new ThreadList(board);
+		ThreadList threadList = new ThreadList();
 		
 		try {
-			JSONArray pages = JSONReader.readJsonArrayFromUrl(URLUtil.makeCatalogURL(board));
+			String catalogUrl = URLUtil.makeCatalogURL(board);
+			JSONArray pages = JSONReader.readJsonArrayFromUrl(catalogUrl);
+			
 			for(int i = 0; i < pages.length(); i++) {
-				JSONArray threads = pages.getJSONObject(i).getJSONArray("threads");
+				JSONObject page = pages.getJSONObject(i);
+				JSONArray threads = getThreadsFromPage(page);
 				for(int j = 0; j < threads.length(); j++) {
 					Thread thread = Thread.fromJson(threads.getJSONObject(j));
 					thread.setBoard(board);
@@ -34,8 +37,11 @@ public class ThreadList {
 		return threadList;
 	}
 
-	public ThreadList(String board) {
-		this.board = board;
+	private static JSONArray getThreadsFromPage(JSONObject page) {
+		return page.getJSONArray("threads");
+	}
+
+	public ThreadList() {
 		threads = new ArrayList<Thread>();
 		filters = new ArrayList<Filter>();
 	}
@@ -108,12 +114,14 @@ public class ThreadList {
 	}
 
 	public List<String> getURLs() {
-		List<String>urls = new ArrayList<String>();
+		List<String> urls = new ArrayList<String>();
 		
 		for(int i = 0; i < this.size(); i++) {
-			logThread(this.get(i));
-			for(String fileName : this.get(i).getFiles()) {
-				urls.add(URLUtil.makeFileURL(board, fileName));
+			Thread thread = this.get(i); 
+			logThread(thread);
+			for(String fileName : thread.getFiles()) {
+				String url = URLUtil.makeFileURL(thread.getBoard(), fileName);
+				urls.add(url);
 			}
 		}
 		
@@ -121,7 +129,7 @@ public class ThreadList {
 	}
 
 	private void logThread(Thread thread) {
-		System.out.println(String.format("%s --> %s\n", board, thread.getName()));		
+		System.out.println(String.format("%s --> %s", thread.getBoard(), thread.getName()));		
 	}
 	
 }

@@ -14,19 +14,21 @@ public class Thread {
 	
 	private String board;
 	private JSONObject json;
-	private List<String> files;
 
 	public static Thread fromJson(JSONObject threadJson) {
 		return new Thread(threadJson);
 	}
 	
 	private Thread(JSONObject threadJson) {
-		files = new ArrayList<String>();
 		this.json = threadJson;
 	}
 	
 	public void setBoard(String board) {
 		this.board = board;	
+	}
+	
+	public String getBoard() {
+		return board;
 	}
 	
 	public String getName() {
@@ -42,21 +44,25 @@ public class Thread {
 	}
 	
 	public List<String> getFiles() {
-		for(String fileName : parseFileNames(json)) {
+		List<String> files = new ArrayList<String>();
+		
+		for(String fileName : getFileNames()) {
 			files.add(fileName);
 		}
 		
 		return files;
 	}
 	
-	private List<String> parseFileNames(JSONObject threadJson) {
+	private List<String> getFileNames() {
 		List<String> fileNames = new ArrayList<String>();
 		
 		try {			
-			JSONArray posts = getPosts(threadJson);
+			JSONArray posts = getPosts();
 			for(int i = 0; i < posts.length(); i++) {
 				try {
-					fileNames.add(getFileName(posts.getJSONObject(i)));
+					JSONObject post = posts.getJSONObject(i);
+					String file = getFileName(post);
+					fileNames.add(file);
 				} catch(JSONException e) {
 					//no file in reply
 				}
@@ -68,12 +74,13 @@ public class Thread {
 		return fileNames;
 	}
 
-	private JSONArray getPosts(JSONObject threadJson) throws JSONException {
+	private JSONArray getPosts() throws JSONException {
 		JSONArray posts;
 		
 		try {
-			String threadUrl = makeThreadUrl(threadJson);
-			posts = JSONReader.readJsonObjectFromUrl(threadUrl).getJSONArray("posts");
+			String threadUrl = makeThreadUrl();
+			JSONObject thread = JSONReader.readJsonObjectFromUrl(threadUrl);
+			posts = thread.getJSONArray("posts");
 		} catch(Exception e) {
 			 throw new JSONException(e);
 		}
@@ -81,17 +88,17 @@ public class Thread {
 		return posts;
 	}
 
-	private String makeThreadUrl(JSONObject threadJson) {
-		int threadNumber = getNumber(threadJson);
+	private String makeThreadUrl() {
+		int threadNumber = getNumber();
 		
 		return URLUtil.makeThreadURL(board, threadNumber);
 	}
 	
-	private int getNumber(JSONObject threadJson) {
+	private int getNumber() {
 		int number;
 		
 		try {
-			number = threadJson.getInt("no");
+			number = json.getInt("no");
 		} catch(Exception e) {
 			number = 0;
 		}
@@ -99,11 +106,11 @@ public class Thread {
 		return number;
 	}
 	
-	private String getFileName(JSONObject threadJson) throws JSONException {
-		long fileName = threadJson.getLong("tim");
-		String fileExtension = threadJson.getString("ext");
+	private String getFileName(JSONObject post) throws JSONException {
+		long name = post.getLong("tim");
+		String ext = post.getString("ext");
 		
-		return String.format("%s%s", fileName, fileExtension); 
+		return String.format("%s%s", name, ext); 
 	}
 
 }

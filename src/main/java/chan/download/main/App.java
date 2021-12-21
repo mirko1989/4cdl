@@ -35,7 +35,7 @@ public class App {
 		}
 		
 		if(isNamesOnly) {
-			crawler.listThreads();
+			crawler.printThreads();
 		} else {
 			crawler.download();
 		}
