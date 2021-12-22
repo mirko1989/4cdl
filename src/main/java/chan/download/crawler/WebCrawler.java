@@ -62,8 +62,10 @@ public class WebCrawler {
 			case DOWNLOAD:
 				printThreads();
 				download();
+				break;
 			case PRINT:
 				printThreads();
+				break;
 			default:
 				//nothing to do
 		}
