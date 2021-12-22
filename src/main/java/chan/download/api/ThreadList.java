@@ -118,7 +118,6 @@ public class ThreadList {
 		
 		for(int i = 0; i < this.size(); i++) {
 			Thread thread = this.get(i); 
-			logThread(thread);
 			for(String fileName : thread.getFiles()) {
 				String url = URLUtil.makeFileURL(thread.getBoard(), fileName);
 				urls.add(url);
@@ -128,8 +127,4 @@ public class ThreadList {
 		return urls;
 	}
 
-	private void logThread(Thread thread) {
-		System.out.println(String.format("%s --> %s", thread.getBoard(), thread.getName()));		
-	}
-	
 }

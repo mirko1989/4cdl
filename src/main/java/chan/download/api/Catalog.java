@@ -18,10 +18,27 @@ public class Catalog {
 	}
 	
 	public List<String> getURLs() {
+		ThreadList threadList = makeThreadList();
+		
+		return threadList.getURLs();
+	}
+
+	private ThreadList makeThreadList() {
 		ThreadList threadList = ThreadList.fromBoard(board);
 		threadList.addFilters(filters);
 		
-		return threadList.getURLs();
+		return threadList;
+	}
+
+	public List<Thread> getThreads() {
+		ThreadList threadList = makeThreadList();
+		List<Thread> threads = new ArrayList<Thread>();
+		
+		for(int i = 0; i < threadList.size(); i++) {
+			threads.add(threadList.get(i));
+		}
+		
+		return threads;
 	}
 
 }

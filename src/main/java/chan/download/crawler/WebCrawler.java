@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import chan.download.api.Catalog;
+import chan.download.api.Thread;
 import chan.download.storage.DummyRepository;
 import chan.download.storage.Repository;
 import chan.download.storage.SaveException;
@@ -50,13 +51,16 @@ public class WebCrawler {
 
 	private void printThreads() {
 		for(Catalog catalog : catalogs) {
-			catalog.getURLs();
+			for(Thread thread : catalog.getThreads()) {
+				System.out.println(String.format("%s --> %s", thread.getBoard(), thread.getName()));
+			}
 		}
 	}
 
 	public void run() {
 		switch(mode) {
 			case DOWNLOAD:
+				printThreads();
 				download();
 			case PRINT:
 				printThreads();
