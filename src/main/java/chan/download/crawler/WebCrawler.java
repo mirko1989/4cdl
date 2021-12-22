@@ -12,6 +12,7 @@ public class WebCrawler {
 
 	private Repository repository;
 	private List<Catalog> catalogs;
+	private RunMode mode;
 
 	public WebCrawler() {
 		repository = new DummyRepository();
@@ -22,11 +23,15 @@ public class WebCrawler {
 		this.repository = repository;
 	}
 	
+	public void useMode(RunMode mode) {
+		this.mode = mode;
+	}
+	
 	public void addCatalog(Catalog catalog) {
 		catalogs.add(catalog);
 	}
 	
-	public void download() {
+	private void download() {
 		for(Catalog catalog : catalogs) {
 			downloadCatalog(catalog);
 		}
@@ -43,9 +48,20 @@ public class WebCrawler {
 		}
 	}
 
-	public void printThreads() {
+	private void printThreads() {
 		for(Catalog catalog : catalogs) {
 			catalog.getURLs();
+		}
+	}
+
+	public void run() {
+		switch(mode) {
+			case DOWNLOAD:
+				download();
+			case PRINT:
+				printThreads();
+			default:
+				//nothing to do
 		}
 	}
 	
