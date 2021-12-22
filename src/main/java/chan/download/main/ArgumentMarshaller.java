@@ -42,19 +42,25 @@ public class ArgumentMarshaller {
 	}
 	
 	public boolean isNameOnly() {
-		boolean printOnly;
-		
-		try {
-			printOnly = args.get(3).equals("--name-only"); 
-		} catch(Exception e) {
-			printOnly = false;
+		return isOptionSet("--name-only");
+	}
+	
+	private boolean isOptionSet(String option) {
+		for(String arg : args) {
+			if(arg.equals(option)) {
+				return true;
+			}
 		}
 		
-		return printOnly;
+		return false;
+	}
+	
+	public boolean isTextOnly() {
+		return isOptionSet("--text-only");
 	}
 
 	public void printUsage() {
-		System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query [--name-only]");
+		System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query [--name-only | --text-only]");
 	}
 	
 }

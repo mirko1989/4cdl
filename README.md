@@ -14,4 +14,7 @@ java -jar 4cdl.jar /home/john/pics /wg ''
 java -jar 4cdl.jar /home/john/pics /b,/s,/wg random
 
 ### Print all thread names matching the given filter (no download)
-java -jar 4cdl.jar /home/john/pics /wg 'tropical birds' --name-only
+java -jar 4cdl.jar /dummy /wg 'tropical birds' --name-only
+
+### Print all comments of all threads matching the given filter (no download)
+java -jar 4cdl.jar /dummy /pol 'not nice' --text-only

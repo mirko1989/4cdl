@@ -94,7 +94,7 @@ public class Thread {
 		return URLUtil.makeThreadURL(board, threadNumber);
 	}
 	
-	private int getNumber() {
+	public int getNumber() {
 		int number;
 		
 		try {
@@ -111,6 +111,23 @@ public class Thread {
 		String ext = post.getString("ext");
 		
 		return String.format("%s%s", name, ext); 
+	}
+
+	public List<String> getComments() {
+		List<String> comments = new ArrayList<String>();
+		
+		JSONArray posts = getPosts();
+		for(int i = 0; i < posts.length(); i++) {
+			try {
+				JSONObject post = posts.getJSONObject(i);
+				String com = post.getString("com");
+				comments.add(com);
+			} catch(Exception e) {
+				//no comment
+			}
+		}
+		
+		return comments;
 	}
 
 }
