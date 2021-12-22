@@ -33,8 +33,8 @@ public class ArgumentMarshaller {
 		return args.get(0);
 	}
 	
-	public String[] getBoards() {
-		return args.get(1).split(",");
+	public List<String> getBoards() {
+		return Arrays.asList(args.get(1).split(","));
 	}
 	
 	public String getQuery() {
