@@ -5,7 +5,7 @@ import java.util.List;
 import chan.download.api.Catalog;
 import chan.download.api.Thread;
 
-public class ThreadNameCrawler implements CrawlerMode {
+public class ThreadNameCrawler implements Crawler {
 
 	public void run(List<Catalog> catalogs) {
 		for(Catalog catalog : catalogs) {

@@ -6,7 +6,7 @@ import chan.download.api.Catalog;
 import chan.download.storage.Repository;
 import chan.download.storage.SaveException;
 
-public class ImageCrawler implements CrawlerMode {
+public class ImageCrawler implements Crawler {
 
 	private Repository repository;
 

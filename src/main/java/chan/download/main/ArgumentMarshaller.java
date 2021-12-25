@@ -3,6 +3,8 @@ package chan.download.main;
 import java.util.Arrays;
 import java.util.List;
 
+import chan.download.crawler.CrawlerMode;
+
 public class ArgumentMarshaller {
 
 	private List<String> args;
@@ -40,8 +42,22 @@ public class ArgumentMarshaller {
 	public String getQuery() {
 		return args.get(2);
 	}
+
+	public CrawlerMode getMode() {
+		CrawlerMode mode;
+		
+		if(isNameOnly()) {
+			mode = CrawlerMode.NAME;
+		} else if(isTextOnly()) {
+			mode = CrawlerMode.TEXT;
+		} else {
+			mode = CrawlerMode.IMAGE;
+		}
+		
+		return mode;
+	}
 	
-	public boolean isNameOnly() {
+	private boolean isNameOnly() {
 		return isOptionSet("--name-only");
 	}
 	
@@ -55,10 +71,10 @@ public class ArgumentMarshaller {
 		return false;
 	}
 	
-	public boolean isTextOnly() {
+	private boolean isTextOnly() {
 		return isOptionSet("--text-only");
 	}
-
+	
 	public void printUsage() {
 		System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query [--name-only | --text-only]");
 	}

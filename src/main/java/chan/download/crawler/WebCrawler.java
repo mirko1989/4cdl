@@ -8,9 +8,9 @@ import chan.download.api.Catalog;
 public class WebCrawler {
 
 	private List<Catalog> catalogs;
-	private CrawlerMode mode;
+	private Crawler mode;
 
-	public WebCrawler(CrawlerMode mode) {
+	public WebCrawler(Crawler mode) {
 		this.mode = mode;
 		catalogs = new ArrayList<Catalog>();
 	}

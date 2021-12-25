@@ -12,12 +12,12 @@ import chan.download.main.ArgumentMarshaller;
 public class CrawlerBuilder {
 	
 	private ArgumentMarshaller marshaller;
-	private CrawlerMode mode;
+	private Crawler mode;
 	private List<Catalog> catalogs;
 
 	public CrawlerBuilder(ArgumentMarshaller marshaller) {
 		this.marshaller = marshaller;
-		this.mode = CrawlerModeFactory.create(marshaller);
+		this.mode = CrawlerFactory.create(marshaller);
 		this.catalogs = createCatalogs(createFilter());
 	}
 	
