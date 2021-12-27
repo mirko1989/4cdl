@@ -116,8 +116,7 @@ public class ThreadList {
 	public List<String> getURLs() {
 		List<String> urls = new ArrayList<String>();
 		
-		for(int i = 0; i < this.size(); i++) {
-			Thread thread = this.get(i); 
+		for(Thread thread : getFilteredThreads()) {
 			for(String fileName : thread.getFiles()) {
 				String url = URLUtil.makeFileURL(thread.getBoard(), fileName);
 				urls.add(url);
