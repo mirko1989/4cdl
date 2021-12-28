@@ -18,19 +18,22 @@ public class CrawlerBuilder {
 	public CrawlerBuilder(ArgumentMarshaller marshaller) {
 		this.marshaller = marshaller;
 		this.mode = CrawlerFactory.create(marshaller);
-		this.catalogs = createCatalogs(createFilter());
+		this.catalogs = createCatalogs();
 	}
 	
-	private Filter createFilter() {
-		return new Filter(Field.ThreadName, FilterOperator.CONTAINS, marshaller.getQuery());
-	}
-	
-	private List<Catalog> createCatalogs(Filter filter) {
-		List<Catalog> catalogs = new ArrayList<Catalog>();
+	private List<Catalog> createCatalogs() {
+		String query = marshaller.getQuery();
+		List<Filter> filters = new ArrayList<Filter>();
+		if(!query.isEmpty()) {
+			filters.add(new Filter(Field.ThreadName, FilterOperator.CONTAINS, query));
+		}
 		
+		List<Catalog> catalogs = new ArrayList<Catalog>();
 		for(String board : marshaller.getBoards()) {
 			Catalog catalog = new Catalog(board);
-			catalog.addFilter(filter);
+			for(Filter filter : filters) {
+				catalog.addFilter(filter);
+			}
 			catalogs.add(catalog);
 		}
 		
