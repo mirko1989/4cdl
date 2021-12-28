@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import chan.download.crawler.CrawlerMode;
+import chan.download.storage.Repository;
+import chan.download.storage.RepositoryFactory;
+import chan.download.storage.RepositoryType;
 
 public class ArgumentMarshaller {
 
@@ -18,32 +21,18 @@ public class ArgumentMarshaller {
 	}
 
 	public boolean isValid() {
-		boolean valid = true;
-		
-		try {
-			getDirectory();
-			getBoards();
-			getQuery();
-		} catch(Exception e) {
-			valid = false;
-		}
-		
-		return valid;
-	}
-	
-	public String getDirectory() {
-		return args.get(0);
+		return isOptionSet("--boards");
 	}
 	
 	public List<String> getBoards() {
-		return Arrays.asList(args.get(1).split(","));
+		return Arrays.asList(valueOfArg("--boards").split(","));
 	}
 	
 	public String getQuery() {
-		return args.get(2);
+		return valueOfArg("--search");
 	}
-
-	public CrawlerMode getMode() {
+	
+	public CrawlerMode getCrawlerMode() {
 		CrawlerMode mode;
 		
 		if(isNameOnly()) {
@@ -62,21 +51,69 @@ public class ArgumentMarshaller {
 	}
 	
 	private boolean isOptionSet(String option) {
-		for(String arg : args) {
-			if(arg.equals(option)) {
-				return true;
+		return indexOfArg(option) >= 0;
+	}
+	
+	private int indexOfArg(String arg) {
+		for(int idx = 0; idx < args.size(); idx++) {
+			String key = args.get(idx).split("=")[0];
+			if(key.equals(arg)) {
+				return idx;
 			}
 		}
 		
-		return false;
+		return -1;
 	}
-	
+
 	private boolean isTextOnly() {
 		return isOptionSet("--text-only");
 	}
 	
 	public void printUsage() {
-		System.out.println("Usage: java -jar 4cdl.jar directory board[,board2[,board3]] query [--name-only | --text-only]");
+		System.out.println("Usage: java -jar 4cdl.jar --boards=board[,board2[,...]] [--search=query] [--save-dir=directory] [--save-db=user:pass@db_host:port] [--name-only] [--text-only]");
+	}
+
+	public Repository getRepository() {
+		Repository repo;
+		
+		if(isSaveFilesystem()) {
+			repo = RepositoryFactory.create(RepositoryType.FILESYSTEM, getDirectory());
+		} else if(isSaveDatabase()) {
+			repo = RepositoryFactory.create(RepositoryType.DATABASE, getDBHost());
+		} else {
+			repo = RepositoryFactory.create(RepositoryType.STDOUT, "");
+		}
+		
+		return repo;
+	}
+
+	private String getDBHost() {
+		return valueOfArg("--save-db");
+	}
+	
+	private String valueOfArg(String arg) {
+		int idx = indexOfArg(arg);
+		String value;
+		
+		if(idx != -1) {
+			value = args.get(idx).split("=")[1];
+		} else {
+			value = "";
+		}
+		
+		return value; 
+	}
+
+	private String getDirectory() {
+		return valueOfArg("--save-dir");
+	}
+
+	private boolean isSaveDatabase() {
+		return isOptionSet("--save-db");
+	}
+
+	private boolean isSaveFilesystem() {
+		return isOptionSet("--save-dir");
 	}
 	
 }
