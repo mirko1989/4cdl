@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import chan.download.crawler.CrawlerMode;
-import chan.download.storage.Repository;
-import chan.download.storage.RepositoryFactory;
 import chan.download.storage.RepositoryType;
 
 public class ArgumentMarshaller {
@@ -73,39 +71,46 @@ public class ArgumentMarshaller {
 		System.out.println("Usage: java -jar 4cdl.jar --boards=board[,board2[,...]] [--search=query] [--save-dir=directory] [--save-db=user:pass@db_host:port] [--name-only] [--text-only]");
 	}
 
-	public Repository getRepository() {
-		Repository repo;
+	public RepositoryType getRepositoryType() {
+		RepositoryType repoType;
 		
 		if(isSaveFilesystem()) {
-			repo = RepositoryFactory.create(RepositoryType.FILESYSTEM, getDirectory());
+			repoType = RepositoryType.FILESYSTEM;
 		} else if(isSaveDatabase()) {
-			repo = RepositoryFactory.create(RepositoryType.DATABASE, getDBHost());
+			repoType = RepositoryType.DATABASE;
 		} else {
-			repo = RepositoryFactory.create(RepositoryType.STDOUT, "");
+			repoType = RepositoryType.STDOUT;
 		}
 		
-		return repo;
+		return repoType;
 	}
 
-	private String getDBHost() {
-		return valueOfArg("--save-db");
-	}
-	
-	private String valueOfArg(String arg) {
-		int idx = indexOfArg(arg);
-		String value;
+	public String getDestination() {
+		String dest;
 		
-		if(idx != -1) {
-			value = args.get(idx).split("=")[1];
+		if(isSaveFilesystem()) {
+			dest = getDirectory();
+		} else if(isSaveDatabase()) {
+			dest = getDBHost();
 		} else {
-			value = "";
+			dest = "";
 		}
 		
-		return value; 
+		return dest;
+	}
+	
+	private String getDBHost() {
+		return valueOfArg("--save-db");
 	}
 
 	private String getDirectory() {
 		return valueOfArg("--save-dir");
+	}	
+	
+	private String valueOfArg(String arg) {
+		int idx = indexOfArg(arg);
+		
+		return idx >= 0 ? args.get(idx).split("=")[1] : "";
 	}
 
 	private boolean isSaveDatabase() {

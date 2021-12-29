@@ -22,12 +22,16 @@ public class ImageCrawler implements Crawler {
 
 	private void downloadCatalog(Catalog catalog) {
 		for(String url : catalog.getURLs()) {
-			try {
-				repository.save(url);
-				System.out.println(url);
-			} catch (SaveException e) {
-				System.err.println(url);
-			}
+			downloadFile(url);
+		}
+	}
+
+	private void downloadFile(String url) {
+		try {
+			repository.save(url);
+			System.out.println(url);
+		} catch (SaveException e) {
+			System.err.println(String.format("%s: %s", url, e.getMessage()));
 		}
 	}
 	

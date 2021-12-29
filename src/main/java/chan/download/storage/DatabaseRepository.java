@@ -11,6 +11,7 @@ import java.sql.Statement;
 public class DatabaseRepository implements Repository {
 
 	private static final String SCHEMA = "4cdl";
+	private static final String TABLE = "Images";
 	private Connection conn;
 	private PreparedStatement prepStmnt;
 
@@ -53,7 +54,7 @@ public class DatabaseRepository implements Repository {
 	}
 	
 	private String makeSchemaDDL() {
-		return "CREATE OR REPLACE DATABASE " + SCHEMA;
+		return "CREATE DATABASE IF NOT EXISTS " + SCHEMA;
 	}
 	
 	private void createTable() throws SQLException {
@@ -64,7 +65,7 @@ public class DatabaseRepository implements Repository {
 	}
 	
 	private String makeImagesTableDDL() {
-		return "CREATE OR REPLACE TABLE Images("
+		return "CREATE TABLE IF NOT EXISTS " + TABLE + "("
 				+ "id INT AUTO_INCREMENT,"
 				+ "img LONGBLOB,"
 				+ "PRIMARY KEY(id)"
@@ -72,11 +73,11 @@ public class DatabaseRepository implements Repository {
 	}
 	
 	private String makeDeleteImagesSQL() {
-		return "DELETE FROM Images";
+		return "DELETE FROM " + TABLE;
 	}
 	
 	private void setupPreparedStatement() throws SQLException {
-		this.prepStmnt = this.conn.prepareStatement("INSERT INTO Images VALUES (default, ?)");
+		this.prepStmnt = this.conn.prepareStatement("INSERT INTO " + TABLE + " VALUES (default, ?)");
 	}
 	
 	public void save(String url) throws SaveException {
@@ -87,7 +88,6 @@ public class DatabaseRepository implements Repository {
 		} catch (Exception e) {
 			throw new SaveException(e.getMessage());
 		}
-		
 	}
 
 }

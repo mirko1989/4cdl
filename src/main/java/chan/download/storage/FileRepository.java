@@ -21,8 +21,8 @@ public class FileRepository implements Repository {
 			InputStream in = new URL(url).openStream();
 			Path path = getAbsoluteFilePath(url);
 			Files.copy(in, path);
-		} catch(Exception ex) {
-			throw new SaveException(String.format("Couldn't save %s", url));
+		} catch(Exception e) {
+			throw new SaveException(e.getMessage());
 		}
 	}
 

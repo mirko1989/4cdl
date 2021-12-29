@@ -1,6 +1,8 @@
 package chan.download.crawler;
 
 import chan.download.main.ArgumentMarshaller;
+import chan.download.storage.Repository;
+import chan.download.storage.RepositoryFactory;
 
 public class CrawlerFactory {
 
@@ -9,7 +11,8 @@ public class CrawlerFactory {
 		
 		switch(marshaller.getCrawlerMode()) {
 			case IMAGE:
-				crawler = new ImageCrawler(marshaller.getRepository());
+				Repository repo = RepositoryFactory.create(marshaller);
+				crawler = new ImageCrawler(repo);
 				break;
 			case TEXT:
 				crawler = new TextCrawler();
