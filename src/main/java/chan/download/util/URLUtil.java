@@ -1,5 +1,8 @@
 package chan.download.util;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class URLUtil {
 	
 	public static String makeCatalogURL(String board) {
@@ -16,5 +19,12 @@ public class URLUtil {
 	
 	public static String makeThreadURL(String board, int threadNumber) {
 		return "https://a.4cdn.org/" + trim(board) + "/thread/" + threadNumber + ".json";
+	}
+	
+	public static String getFileNameFromURL(String url) {
+		List<String> urlParts = Arrays.asList(url.split("/"));
+		String fileName = urlParts.get(urlParts.size() - 1);
+		
+		return fileName;
 	}
 }

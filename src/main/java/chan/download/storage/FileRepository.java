@@ -5,8 +5,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+
+import chan.download.util.URLUtil;
 
 public class FileRepository implements Repository {
 
@@ -27,8 +27,7 @@ public class FileRepository implements Repository {
 	}
 
 	private Path getAbsoluteFilePath(String url) {
-		List<String> urlParts = Arrays.asList(url.split("/"));
-		String fileName = urlParts.get(urlParts.size() - 1);
+		String fileName = URLUtil.getFileNameFromURL(url);
 		
 		return Paths.get(directory, fileName);
 	}

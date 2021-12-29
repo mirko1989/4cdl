@@ -1,12 +1,16 @@
 package chan.download.storage;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import chan.download.util.URLUtil;
 
 public class DatabaseRepository implements Repository {
 
@@ -60,34 +64,48 @@ public class DatabaseRepository implements Repository {
 	private void createTable() throws SQLException {
 		Statement stmnt = conn.createStatement();
 		stmnt.executeUpdate(makeImagesTableDDL());
-		stmnt.executeUpdate(makeDeleteImagesSQL());
 		stmnt.close();
 	}
 	
 	private String makeImagesTableDDL() {
 		return "CREATE TABLE IF NOT EXISTS " + TABLE + "("
-				+ "id INT AUTO_INCREMENT,"
-				+ "img LONGBLOB,"
-				+ "PRIMARY KEY(id)"
+				+ "sha1 CHAR(40),"
+				+ "name VARCHAR(32)," 
+				+ "data LONGBLOB,"
+				+ "PRIMARY KEY(sha1)"
 				+ ")";
 	}
 	
-	private String makeDeleteImagesSQL() {
-		return "DELETE FROM " + TABLE;
-	}
-	
 	private void setupPreparedStatement() throws SQLException {
-		this.prepStmnt = this.conn.prepareStatement("INSERT INTO " + TABLE + " VALUES (default, ?)");
+		this.prepStmnt = this.conn.prepareStatement("INSERT INTO " + TABLE + " VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE sha1=sha1");
 	}
 	
 	public void save(String url) throws SaveException {
 		try {
-			InputStream image = new URL(url).openStream();
-			prepStmnt.setBinaryStream(1, image);
+			String fileName = URLUtil.getFileNameFromURL(url);
+			byte[] image = new URL(url).openStream().readAllBytes();
+			ByteArrayInputStream bais = new ByteArrayInputStream(image);
+			String sha1 = makeSHA1(image);
+			prepStmnt.setString(1, sha1);
+			prepStmnt.setString(2, fileName);
+			prepStmnt.setBinaryStream(3, bais);
 			prepStmnt.executeUpdate();
 		} catch (Exception e) {
 			throw new SaveException(e.getMessage());
 		}
+	}
+	
+	private String makeSHA1(byte[] image) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		md.update(image);
+		byte[] digest = md.digest();
+		
+		StringBuffer hexBuffer = new StringBuffer();
+		for(int i = 0; i < digest.length; i++) {
+			hexBuffer.append(Integer.toHexString(0xFF & digest[i]));
+		}
+		
+		return hexBuffer.toString();
 	}
 
 }
