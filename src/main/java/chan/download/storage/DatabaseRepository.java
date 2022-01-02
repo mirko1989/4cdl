@@ -1,5 +1,7 @@
 package chan.download.storage;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -88,8 +90,17 @@ public class DatabaseRepository implements Repository {
 			prepStmnt.setString(2, fileName);
 			prepStmnt.setBytes(3, image);
 			prepStmnt.executeUpdate();
+		} catch (MalformedURLException e) {
+			throw new SaveException("Invalid URL, skipping.");
+		} catch (IOException e) {
+			throw new SaveException("General I/O Error, skipping.");
+		} catch (NoSuchAlgorithmException e) {
+			throw new SaveException("Invalid hash algorithm specified, skipping.");
+		} catch (SQLException e) {
+			throw new SaveException("General SQL Error, skipping.");
 		} catch (Exception e) {
-			throw new SaveException(e.getMessage());
+			System.out.println("Unknown error, skipping. Details see stacktrace below.\n\n");
+			e.printStackTrace();
 		}
 	}
 	
