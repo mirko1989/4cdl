@@ -8,17 +8,15 @@ import chan.download.api.Field;
 import chan.download.api.Filter;
 import chan.download.api.FilterOperator;
 import chan.download.main.ArgumentMarshaller;
+import chan.download.storage.Repository;
+import chan.download.storage.RepositoryFactory;
 
 public class CrawlerBuilder {
 	
 	private ArgumentMarshaller marshaller;
-	private Crawler mode;
-	private List<Catalog> catalogs;
 
 	public CrawlerBuilder(ArgumentMarshaller marshaller) {
 		this.marshaller = marshaller;
-		this.mode = CrawlerFactory.create(marshaller);
-		this.catalogs = createCatalogs();
 	}
 	
 	private List<Catalog> createCatalogs() {
@@ -41,9 +39,11 @@ public class CrawlerBuilder {
 	}
 	
 	public WebCrawler build() {
+		Repository repo = RepositoryFactory.create(marshaller.getDestination());
+		Crawler mode = CrawlerFactory.create(marshaller.getCrawlerMode(), repo);
 		WebCrawler crawler = new WebCrawler(mode);
 		
-		for(Catalog catalog : catalogs) {
+		for(Catalog catalog : createCatalogs()) {
 			crawler.addCatalog(catalog);
 		}
 		

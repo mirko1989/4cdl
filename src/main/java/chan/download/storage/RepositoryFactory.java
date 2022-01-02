@@ -1,21 +1,20 @@
 package chan.download.storage;
 
-import chan.download.main.ArgumentMarshaller;
-
 public class RepositoryFactory {
 
-	public static Repository create(ArgumentMarshaller marshaller) {
+	public static Repository create(Destination dest) {
+		String path = dest.getPath();
 		Repository repo;
 		
-		switch(marshaller.getRepositoryType()) {
+		switch(dest.getType()) {
 			case FILESYSTEM:
-				repo = new FileRepository(marshaller.getDestination());
+				repo = new FileRepository(path);
 				break;
 			case DATABASE:
-				repo = new DatabaseRepository(marshaller.getDestination());
+				repo = new DatabaseRepository(path);
 				break;
 			case STDOUT:
-				repo = new DummyRepository();
+				repo = new StdoutRepository();
 				break;
 			default:
 				repo = new DummyRepository();

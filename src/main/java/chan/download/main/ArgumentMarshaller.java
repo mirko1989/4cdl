@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import chan.download.crawler.CrawlerMode;
+import chan.download.storage.Destination;
 import chan.download.storage.RepositoryType;
 
 public class ArgumentMarshaller {
@@ -70,8 +71,23 @@ public class ArgumentMarshaller {
 	public void printUsage() {
 		System.out.println("Usage: java -jar 4cdl.jar --boards=board[,board2[,...]] [--search=query] [--save-dir=directory] [--save-db=user:pass@db_host:port] [--name-only] [--text-only]");
 	}
+	
+	/**
+	 * If --name-only or --text-only argument is given, always print to STDOUT
+	 */
+	public Destination getDestination() {
+		Destination dest;
+		
+		if(isNameOnly() || isTextOnly()) {
+			dest = new Destination(RepositoryType.STDOUT, "");
+		} else {
+			dest = new Destination(getRepositoryType(), getPath()); 
+		}
+		
+		return dest; 
+	}
 
-	public RepositoryType getRepositoryType() {
+	private RepositoryType getRepositoryType() {
 		RepositoryType repoType;
 		
 		if(isSaveFilesystem()) {
@@ -85,7 +101,7 @@ public class ArgumentMarshaller {
 		return repoType;
 	}
 
-	public String getDestination() {
+	private String getPath() {
 		String dest;
 		
 		if(isSaveFilesystem()) {

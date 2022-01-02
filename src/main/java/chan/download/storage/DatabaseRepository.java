@@ -1,6 +1,5 @@
 package chan.download.storage;
 
-import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -84,11 +83,10 @@ public class DatabaseRepository implements Repository {
 		try {
 			String fileName = URLUtil.getFileNameFromURL(url);
 			byte[] image = new URL(url).openStream().readAllBytes();
-			ByteArrayInputStream bais = new ByteArrayInputStream(image);
 			String sha1 = makeSHA1(image);
 			prepStmnt.setString(1, sha1);
 			prepStmnt.setString(2, fileName);
-			prepStmnt.setBinaryStream(3, bais);
+			prepStmnt.setBytes(3, image);
 			prepStmnt.executeUpdate();
 		} catch (Exception e) {
 			throw new SaveException(e.getMessage());

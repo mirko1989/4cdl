@@ -1,24 +1,21 @@
 package chan.download.crawler;
 
-import chan.download.main.ArgumentMarshaller;
 import chan.download.storage.Repository;
-import chan.download.storage.RepositoryFactory;
 
 public class CrawlerFactory {
 
-	public static Crawler create(ArgumentMarshaller marshaller) {
+	public static Crawler create(CrawlerMode mode, Repository repo) {
 		Crawler crawler;
 		
-		switch(marshaller.getCrawlerMode()) {
+		switch(mode) {
 			case IMAGE:
-				Repository repo = RepositoryFactory.create(marshaller);
 				crawler = new ImageCrawler(repo);
 				break;
 			case TEXT:
-				crawler = new TextCrawler();
+				crawler = new TextCrawler(repo);
 				break;
 			case NAME:
-				crawler = new ThreadNameCrawler();
+				crawler = new ThreadNameCrawler(repo);
 				break;
 			default:
 				crawler = new DummyCrawler();
