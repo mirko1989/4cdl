@@ -1,4 +1,4 @@
-package chan.download.crawler;
+package chan.download.main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,9 @@ import chan.download.api.Catalog;
 import chan.download.api.Field;
 import chan.download.api.Filter;
 import chan.download.api.FilterOperator;
-import chan.download.main.ArgumentMarshaller;
+import chan.download.crawler.Crawler;
+import chan.download.crawler.CrawlerFactory;
+import chan.download.crawler.WebCrawler;
 import chan.download.storage.Repository;
 import chan.download.storage.RepositoryFactory;
 

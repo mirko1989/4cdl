@@ -17,21 +17,17 @@ public class DatabaseRepository implements Repository {
 
 	private static final String SCHEMA = "4cdl";
 	private static final String TABLE = "Images";
+	private String host;
 	private Connection conn;
 	private PreparedStatement prepStmnt;
+	private boolean isDatabaseUp;
 
 	public DatabaseRepository(String host) {
-		try {
-			setupConnection(host);
-			setupDatabase();
-			setupPreparedStatement();
-		} catch (SQLException e) {
-			System.err.println(e.getMessage());
-			System.exit(-1);
-		}
+		this.host = host;
+		this.isDatabaseUp = false;
 	}
 
-	private void setupConnection(String host) throws SQLException {
+	private void connect(String host) throws SQLException {
 		String jdbcUrl = makeJdbcURL(host);
 		this.conn = DriverManager.getConnection(jdbcUrl);
 	}
@@ -82,6 +78,10 @@ public class DatabaseRepository implements Repository {
 	}
 	
 	public void save(String url) throws SaveException {
+		if(!isDatabaseUp) {
+			setupConnection();
+		}
+		
 		try {
 			String fileName = URLUtil.getFileNameFromURL(url);
 			byte[] image = new URL(url).openStream().readAllBytes();
@@ -104,6 +104,17 @@ public class DatabaseRepository implements Repository {
 		}
 	}
 	
+	private void setupConnection() {
+		try {
+			connect(host);
+			setupDatabase();
+			setupPreparedStatement();
+			isDatabaseUp = true;
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}		
+	}
+
 	private String makeSHA1(byte[] image) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("SHA-1");
 		md.update(image);

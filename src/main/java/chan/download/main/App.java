@@ -1,6 +1,5 @@
 package chan.download.main;
 
-import chan.download.crawler.CrawlerBuilder;
 import chan.download.crawler.WebCrawler;
 
 public class App {
